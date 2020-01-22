@@ -29,7 +29,7 @@ using namespace std;
 #define WAVE_START_INDEX 0  // Position to start in wave function (0-255)
 #define WAVE_SPEED_FACTOR 8 // Increment for the wave, larger means faster bounces
 #define SCROLL_STEP 1       // Positive scrolls 'normally', negative scrolls 'backwards'
-#define LOOP_DELAY 15       // Milliseconds to wait between full matrix updates
+#define LOOP_DELAY 10       // Milliseconds to wait between full matrix updates
 #define INITIAL_HUE 0       // Hue to set scroller to on start
 #define HUE_INCREMENT 1     // 0 for single colour, higher numbers cycle colours faster
 
@@ -38,7 +38,7 @@ CRGB leds[NUM_LEDS];
 
 static const string scrollyMessage = "      "
                                      "   DEMO OF BASIC SCROLLY TEXT MESSAGES"
-                                     "   THIS RUNS COMFORTABLY ON A NODE MCU AND CAN SUPPORT 50+ FPS ON A 256-PIXEL LED MATRIX DISPLAY."
+                                     "   THIS RUNS COMFORTABLY ON A NODE MCU AND CAN SUPPORT 50+ FPS ON A 512-PIXEL LED MATRIX DISPLAY."
                                      "   8x8 AND 6x6 FONTS ARE INCLUDED, with lower-case text, as well as various punctuation characters!"
                                      "   $ % ^ & * ( ) - = _ + [ ] { } ' @ # ~ / ? | \\"
                                      "   No non-English support... sorry!"
@@ -134,7 +134,6 @@ int getPixelStripPosition(int x, int y)
       { // Odd columns
         index = (x + 1) * NUM_ROWS - y - 1;
       }
-//      index = NUM_LEDS - 1 - index;
     } else if (ORIENTATION == 3) { // Pixel 0 at bottom-left
       if (y % 2 == 0)
       { // Even rows
@@ -255,8 +254,10 @@ void testMatrix(CRGB colour) {
   memset(leds, 0, NUM_LEDS * 3);
   FastLED.show();
   for (int y = 0; y < NUM_ROWS; y++) {
-    for (int x = 0; x < NUM_COLUMNS; x++) {
+    for (int x = 0; x < NUM_COLUMNS; x += 2) {
       int pixelPos = getPixelStripPosition(x, y);
+      leds[pixelPos] = colour;
+      pixelPos = getPixelStripPosition(x + 1, y);
       leds[pixelPos] = colour;
       FastLED.show();
 //      Serial.print("x = ");
